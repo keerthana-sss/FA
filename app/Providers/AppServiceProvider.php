@@ -2,7 +2,12 @@
 
 namespace App\Providers;
 
+use Laravel\Passport\Passport;
+use App\Repositories\TripRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Contracts\TripRepositoryInterface;
+use App\Contracts\UserRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +16,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(TripRepositoryInterface::class, TripRepository::class);
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 
     /**
@@ -19,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Passport::enablePasswordGrant();
+
+        // Passport::tokensExpireIn(now()->addMinutes(1440));
+        // Passport::refreshTokensExpireIn(now()->addMinutes(1440));
     }
 }
