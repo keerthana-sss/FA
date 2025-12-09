@@ -40,8 +40,15 @@ class Trip extends Model
             ->withPivot('role')->withTimestamps();
     }
 
+    //File
+    public function files()
+    {
+        return $this->hasMany(TripFile::class);
+    }
+
+
     //ROLE & PERMISSION HELPERS
-    
+
     // public function isAdmin(User $user): bool
     // {
     //     return $this->users()
@@ -57,7 +64,7 @@ class Trip extends Model
     //         ->wherePivot('role', 'traveler')
     //         ->exists();
     // }
-    
+
 
 
     //SCOPES
