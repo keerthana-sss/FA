@@ -46,6 +46,11 @@ class Trip extends Model
         return $this->hasMany(TripFile::class);
     }
 
+    //Itinarary
+    public function itineraries()
+    {
+        return $this->hasMany(Itinerary::class);
+    }
 
     //ROLE & PERMISSION HELPERS
 
