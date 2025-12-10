@@ -23,7 +23,11 @@ class TripService
     public function createTrip(array $data, int $ownerId): Trip
     {
         $data['owner_id'] = $ownerId;
-        return DB::transaction(fn() => $this->tripRepository->create($data));
+        $trip =  DB::transaction(fn() => $this->tripRepository->create($data));
+        $trip->users()->attach($data['owner_id'], [
+            'role' => 'admin',
+        ]);
+        return $trip;
     }
 
     public function updateTrip(Trip $trip, array $data, int $userId): bool

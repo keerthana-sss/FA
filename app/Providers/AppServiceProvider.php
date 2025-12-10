@@ -5,11 +5,13 @@ namespace App\Providers;
 use Laravel\Passport\Passport;
 use App\Repositories\TripRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\ExpenseRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\TripFileRepository;
 use App\Repositories\ItineraryRepository;
 use App\Contracts\TripRepositoryInterface;
 use App\Contracts\UserRepositoryInterface;
+use App\Contracts\ExpenseRepositoryInterface;
 use App\Contracts\TripFileRepositoryInterface;
 use App\Contracts\ItineraryRepositoryInterface;
 
@@ -24,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(TripFileRepositoryInterface::class,TripFileRepository::class);
         $this->app->bind(ItineraryRepositoryInterface::class, ItineraryRepository::class);
+        $this->app->bind(ExpenseRepositoryInterface::class,ExpenseRepository::class
+    );
     }
 
     /**

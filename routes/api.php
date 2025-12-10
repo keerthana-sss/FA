@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\TripFileController;
 use App\Http\Controllers\ItineraryController;
 
@@ -45,10 +46,16 @@ Route::middleware('auth:api')->group(function () {
 
 
 //itinarary managment
-Route::middleware('auth:api')->prefix('trips/{trip}')->group(function () {
-        Route::get('itineraries', [ItineraryController::class, 'index']);
-        Route::post('itineraries', [ItineraryController::class, 'store']);
-        Route::put('itineraries/{itinerary}', [ItineraryController::class, 'update']);
-        Route::delete('itineraries/{itinerary}', [ItineraryController::class, 'destroy']);
+Route::middleware('auth:api')->prefix('trips/{trip}/itineraries')->group(function () {
+        Route::get('/', [ItineraryController::class, 'index']);
+        Route::post('/', [ItineraryController::class, 'store']);
+        Route::put('/{itinerary}', [ItineraryController::class, 'update']);
+        Route::delete('/{itinerary}', [ItineraryController::class, 'destroy']);
 });
 
+//Expenses
+Route::middleware(['auth:api','check.trip.members'])->prefix('trips/{trip}/expenses')->group(function () {
+    Route::post('/', [ExpenseController::class, 'store']);
+    Route::patch('/settle/{expense}', [ExpenseController::class, 'settle']);
+    Route::get('/report', [ExpenseController::class, 'report']);
+});
