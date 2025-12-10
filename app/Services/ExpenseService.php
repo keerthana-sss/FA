@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Trip;
 use App\Models\Expense;
+use App\Events\ExpenseCreated;
 use App\Contracts\ExpenseRepositoryInterface;
 
 class ExpenseService
@@ -20,7 +21,7 @@ class ExpenseService
         $expenses = [];
 
         if ($data['split_type'] === 'single') {
-            $expenses[] = $this->expenseRepo->create([
+            $expense = $this->expenseRepo->create([
                 'trip_id' => $data['trip_id'],
                 'payer_id' => $data['payer_id'],
                 'payee_id' => $data['payee_id'],
@@ -29,12 +30,16 @@ class ExpenseService
                 'description' => $data['description'] ?? null,
                 'is_settled' => 0
             ]);
+
+            event(new ExpenseCreated($expense));
+
+            $expenses[] = $expense;
         }
 
         if ($data['split_type'] === 'equal') {
             $perPayeeAmount = $data['amount'] / count($data['payee_ids']);
             foreach ($data['payee_ids'] as $payeeId) {
-                $expenses[] = $this->expenseRepo->create([
+                $expense = $this->expenseRepo->create([
                     'trip_id' => $data['trip_id'],
                     'payer_id' => $data['payer_id'],
                     'payee_id' => $payeeId,
@@ -43,6 +48,10 @@ class ExpenseService
                     'description' => $data['description'] ?? null,
                     'is_settled' => 0
                 ]);
+
+                event(new ExpenseCreated($expense));
+
+                $expenses[] = $expense;
             }
         }
 

@@ -25,6 +25,10 @@ class Expense extends Model
     ];
 
     //Relation
+    public function trip()
+    {
+        return $this->belongsTo(Trip::class);
+    }
     public function payer()
     {
         return $this->belongsTo(User::class, 'payer_id');

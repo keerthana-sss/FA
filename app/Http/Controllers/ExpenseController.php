@@ -11,7 +11,7 @@ use App\Http\Requests\StoreExpenseRequest;
 
 class ExpenseController extends Controller
 {
-    protected $expenseService;
+    protected ExpenseService $expenseService;
 
     public function __construct(ExpenseService $expenseService)
     {

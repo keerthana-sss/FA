@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\Itinerary;
+use App\Events\ItineraryCreated;
 use Illuminate\Support\Collection;
 use App\Contracts\ItineraryRepositoryInterface;
 
@@ -22,7 +23,10 @@ class ItineraryRepository implements ItineraryRepositoryInterface
 
     public function create(array $data): Itinerary
     {
-        return Itinerary::create($data);
+        
+        $itinerary = Itinerary::create($data);
+        event(new ItineraryCreated($itinerary));
+        return $itinerary;
     }
 
     public function update(Itinerary $itinerary, array $data): Itinerary
