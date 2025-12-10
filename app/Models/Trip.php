@@ -52,6 +52,12 @@ class Trip extends Model
         return $this->hasMany(Itinerary::class);
     }
 
+    //Expenses
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
+
     //ROLE & PERMISSION HELPERS
 
     // public function isAdmin(User $user): bool

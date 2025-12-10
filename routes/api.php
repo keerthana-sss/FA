@@ -1,13 +1,20 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\TripFileController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItineraryController;
 
 //Register login logout
+// Route::get('/test', function (){
+//     echo(Carbon::today()."\n");
+//     print_r (now()->subWeek()->startOfWeek(). "\n");
+//     echo(now()->subWeek()->endOfWeek(). "\n");
+// });
 Route::prefix('/auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
@@ -59,3 +66,6 @@ Route::middleware(['auth:api','check.trip.members'])->prefix('trips/{trip}/expen
     Route::patch('/settle/{expense}', [ExpenseController::class, 'settle']);
     Route::get('/report', [ExpenseController::class, 'report']);
 });
+
+
+Route::get('/dashboard/trip/{trip}', [DashboardController::class, 'showTripDashboard'])->name('dashboard');
