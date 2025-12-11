@@ -44,8 +44,6 @@ class ExpenseController extends Controller
     {
         $expenses = $this->expenseService->getTripExpenses($tripId);
 
-        // Here you can calculate net amount per user as needed
-
         return response()->json([
             'data' => $expenses
         ]);

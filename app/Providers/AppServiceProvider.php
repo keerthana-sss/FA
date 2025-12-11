@@ -22,8 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(TripRepositoryInterface::class, TripRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(TripRepositoryInterface::class, TripRepository::class);
         $this->app->bind(TripFileRepositoryInterface::class,TripFileRepository::class);
         $this->app->bind(ItineraryRepositoryInterface::class, ItineraryRepository::class);
         $this->app->bind(ExpenseRepositoryInterface::class,ExpenseRepository::class

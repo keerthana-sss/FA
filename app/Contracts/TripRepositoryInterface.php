@@ -6,6 +6,7 @@ use App\Models\Trip;
 
 interface TripRepositoryInterface
 {
+    public function listAll();
     public function create(array $data): Trip;
 
     // public function find(int $id): ?Trip;

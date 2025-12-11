@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Models\Trip;
-use App\Contracts\TripRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use App\Contracts\TripRepositoryInterface;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class TripService
 {
@@ -13,6 +15,10 @@ class TripService
     public function __construct(TripRepositoryInterface $tripRepository)
     {
         $this->tripRepository = $tripRepository;
+    }
+    public function listAllTrips()
+    {
+        return $this->tripRepository->listAll();
     }
 
     public function listForUser(int $userId)
@@ -32,39 +38,27 @@ class TripService
 
     public function updateTrip(Trip $trip, array $data, int $userId): bool
     {
-        if ($trip->owner_id !== $userId) {
-            throw new \Exception('Unauthorized');
-        }
-
         return DB::transaction(fn() => $this->tripRepository->update($trip, $data));
     }
 
     public function deleteTrip(Trip $trip, int $userId): bool
     {
-        if ($trip->owner_id !== $userId) {
-            throw new \Exception('Unauthorized');
-        }
-
         return DB::transaction(fn() => $this->tripRepository->delete($trip));
     }
 
-    public function addMember(Trip $trip, int $memberId, string $role, int $actorId): void
+    public function addMember(Trip $trip, int $memberId, string $role)
     {
-        if ($trip->owner_id !== $actorId) {
-            throw new \Exception('Unauthorized');
-        }
-
         DB::transaction(fn() => $trip->users()->syncWithoutDetaching([
             $memberId => ['role' => $role]
         ]));
+        return [
+            'user_id' => $memberId,
+            'role' => $role,
+        ];
     }
 
-    public function removeMember(Trip $trip, int $memberId, int $actorId): void
+    public function removeMember(Trip $trip, int $memberId): void
     {
-        if ($trip->owner_id !== $actorId) {
-            throw new \Exception('Unauthorized');
-        }
-
         DB::transaction(fn() => $trip->users()->detach($memberId));
     }
 }

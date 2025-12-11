@@ -10,10 +10,12 @@ use App\Contracts\ExpenseRepositoryInterface;
 class ExpenseService
 {
     protected $expenseRepo;
+    protected $balanceService;
 
-    public function __construct(ExpenseRepositoryInterface $expenseRepo)
+    public function __construct(ExpenseRepositoryInterface $expenseRepo, BalanceService $balanceService)
     {
         $this->expenseRepo = $expenseRepo;
+        $this->balanceService = $balanceService;
     }
 
     public function addExpense(array $data)
@@ -67,28 +69,13 @@ class ExpenseService
     {
         $expenses = $this->expenseRepo->getUnsettledByTrip($tripId);
 
-        $summary = [];
+        $balances = $this->balanceService->computeNetBalances($expenses);
 
-        foreach ($expenses as $exp) {
-            $key = $exp->payer_id . '_' . $exp->payee_id;
-
-            if (!isset($summary[$key])) {
-                $summary[$key] = [
-                    'payer_id' => $exp->payer_id,
-                    'payee_id' => $exp->payee_id,
-                    'amount'   => 0
-                ];
-            }
-
-            $summary[$key]['amount'] += $exp->amount;
-        }
-        return array_values(array_map(function ($row) {
-            return [
-                'payer_id' => $row['payer_id'],
-                'payee_id' => $row['payee_id'],
-                'amount'   => $row['amount'],
-                'message'  => "User {$row['payee_id']} needs to pay User {$row['payer_id']} ₹{$row['amount']}"
-            ];
-        }, $summary));
+        return $balances->map(fn($row) => [
+            'payer_id' => $row['payer_id'],
+            'payee_id' => $row['payee_id'],
+            'amount'   => $row['amount'],
+            'message'  => "User {$row['payee_id']} needs to pay User {$row['payer_id']} ₹{$row['amount']}"
+        ]);
     }
 }

@@ -7,30 +7,45 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Response\ApiResponse;
 use App\Services\TripService;
-use App\Http\Requests\AddMemberRequest;
-use App\Http\Requests\CreateTripRequest;
+use App\Http\Resources\TripResource;
 use App\Http\Requests\UpdateRoleRequest;
-use App\Http\Requests\UpdateTripRequest;
+use App\Http\Requests\Trip\AddMemberRequest;
+use App\Http\Requests\Trip\CreateTripRequest;
+use App\Http\Requests\Trip\UpdateTripRequest;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TripController extends Controller
 {
+    use AuthorizesRequests, ValidatesRequests;
     protected TripService $tripService;
     public function __construct(TripService $tripService)
     {
         $this->tripService =  $tripService;
     }
 
-    public function index(Request $request)
+    public function index()
     {
-       $trips = $this->tripService->listForUser(auth()->id());
+        try {
+            // Get all trips with owner info
+            $trips = $this->tripService->listAllTrips();
+            if (!$trips) {
+                return ApiResponse::setMessage('No trips at present')
+                    ->response(Response::HTTP_OK);
+            }
 
-        return ApiResponse::setMessage('Trips fetched successfully')
-            ->setData($trips)
-            ->response(Response::HTTP_OK);
+            return ApiResponse::setMessage('All trips fetched successfully')
+                ->setData(TripResource::collection($trips))
+                ->response(Response::HTTP_OK);
+        } catch (\Throwable $e) {
+            return ApiResponse::setMessage('Failed to fetch trips: ' . $e->getMessage())
+                ->response(Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public function store(CreateTripRequest $request)
+    public function createTrip(CreateTripRequest $request)
     {
         $trip = $this->tripService->createTrip($request->validated(), auth()->user()['id']);
 
@@ -40,8 +55,6 @@ class TripController extends Controller
     }
     public function show(Trip $trip)
     {
-        // $trip = $this->tripService->getTrip($tripId, auth()->id());
-
         return ApiResponse::setMessage('Trip details fetched')
             ->setData($trip)
             ->response(Response::HTTP_OK);
@@ -49,6 +62,8 @@ class TripController extends Controller
 
     public function update(UpdateTripRequest $request, Trip $trip)
     {
+        $this->authorize('checkIsNotOwner', $trip);
+
         $trip = $this->tripService->updateTrip($trip, $request->validated(), auth()->id());
 
         return ApiResponse::setMessage('Trip updated successfully')
@@ -58,24 +73,21 @@ class TripController extends Controller
 
     public function destroy(Trip $trip)
     {
+        $this->authorize('checkIsNotOwner', $trip);
         $this->tripService->deleteTrip($trip, auth()->id());
 
         return ApiResponse::setMessage('Trip deleted successfully')
             ->response(Response::HTTP_OK);
     }
 
-    public function addMember(Request $request, Trip $trip)
+    public function addMember(AddMemberRequest $request, Trip $trip)
     {
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'role'    => 'nullable|in:admin,traveler',
-        ]);
+        $this->authorize('checkIsNotOwner', $trip);
 
         $member = $this->tripService->addMember(
             $trip,
-            $validated['user_id'],
-            $validated['role'] ?? 'traveler',
-            auth()->id()
+            $request['user_id'],
+            $request['role'] ?? 'traveler'
         );
 
         return ApiResponse::setMessage('Member added successfully')
@@ -83,9 +95,11 @@ class TripController extends Controller
             ->response(Response::HTTP_CREATED);
     }
 
-        public function removeMember(Trip $trip, $userId)
+    public function removeMember(Trip $trip, $user)
     {
-        $this->tripService->removeMember($trip, $userId, auth()->id());
+        $this->authorize('checkIsNotOwner', $trip);
+        $this->authorize('checkIsOwner', $trip);
+        $this->tripService->removeMember($trip, $user);
         return ApiResponse::setMessage('Member removed')->response();
     }
 

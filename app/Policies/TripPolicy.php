@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Trip;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class TripPolicy
 {
@@ -29,18 +30,28 @@ class TripPolicy
     }
 
     /**
-     * Any member of the trip can update it.
+     * Check if they are not owner of that trip
      */
-    public function update(User $user, Trip $trip): bool
+    public function checkIsNotOwner(User $user, Trip $trip): bool
     {
-        return $trip->members()->where('user_id', $user->id)->exists();
+        if ($trip->owner_id !== $user->id) {
+            throw new AuthorizationException('Only the trip owner can update/detele this trip.');
+        }
+
+        return true;
     }
 
+
     /**
-     * Any member of the trip can delete it.
+     * Check if they  are owner of that trip
      */
-    public function delete(User $user, Trip $trip): bool
+    public function checkIsOwner(User $user, Trip $trip): bool
     {
-        return $trip->members()->where('user_id', $user->id)->exists();
+        if ($trip->owner_id == $user->id) {
+            throw new AuthorizationException('Trip owner cannot be removed.');
+        }
+
+        return true;
     }
+
 }

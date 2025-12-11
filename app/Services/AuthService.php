@@ -35,14 +35,13 @@ class AuthService
      */
     public function register(array $data)
     {
-        $user =  User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => $data['password'],
+        $user = $this->userRepository->create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
         ]);
 
         return [$user, $this->issueToken($data['email'],  $data['password'])];
-        // return $data;
     }
 
     /**
@@ -72,26 +71,16 @@ class AuthService
      */
     public function logout($user)
     {
-        // If using the token guard, the token is available via $request->user()->token()
-        // but with Passport and `auth:api`, you can get token id from the bearer token
-
-
         $accessToken = $user->token();
 
-
         if ($accessToken) {
-            // Revoke access token
             $accessToken->revoke();
-
 
             // Revoke associated refresh tokens
             DB::table('oauth_refresh_tokens')
                 ->where('access_token_id', $accessToken->id)
                 ->update(['revoked' => true]);
         }
-
-
-        // return response()->json(['message' => 'Logged out successfully']);
     }
 
     /**

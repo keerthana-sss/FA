@@ -5,21 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Response\ApiResponse;
 use App\Services\AuthService;
-use Illuminate\Support\Facades\DB;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
-    protected $psr17Factory;
     protected AuthService $authService;
 
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
-        $this->psr17Factory = new Psr17Factory();
     }
 
     
@@ -35,7 +31,7 @@ class AuthController extends Controller
 
         return ApiResponse::setMessage('Registration successful.')
             ->setData($response)
-            ->response(201);
+            ->response(Response::HTTP_CREATED);
     }
 
     //LOGIN

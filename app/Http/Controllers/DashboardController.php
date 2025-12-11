@@ -10,16 +10,12 @@ class DashboardController extends Controller
 {
     public function showTripDashboard(Request $request, $tripId)
     {
-        // Fetch trip directly by ID
         $trip = Trip::with(['users', 'expenses', 'files'])->findOrFail($tripId);
 
-        // Total members
         $totalMembers = $trip->users->count();
 
-        // Total expense
         $totalExpense = $trip->expenses->sum('amount');
 
-        // Payer vs total contribution
         $payerData = $trip->expenses
             ->groupBy('payer_id')
             ->map(fn($expenses, $payerId) => [

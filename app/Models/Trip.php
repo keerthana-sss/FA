@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Enums\TripStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Trip extends Model
 {
     /** @use HasFactory<\Database\Factories\TripFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'owner_id',
         'title',

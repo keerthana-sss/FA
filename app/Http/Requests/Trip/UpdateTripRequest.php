@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Trip;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateTripRequest extends FormRequest
+class UpdateTripRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,11 @@ class CreateTripRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'       => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
+            'title'       => 'sometimes|string|max:255',
+            'destination' => 'sometimes|string|max:255',
             'start_date'  => 'nullable|date|after_or_equal:today',
             'end_date'    => 'nullable|date|after_or_equal:start_date',
+            'status'      => 'nullable|integer|in:0,1,2,3',
         ];
     }
 }

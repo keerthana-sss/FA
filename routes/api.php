@@ -31,13 +31,15 @@ Route::get('/trips', [TripController::class, 'index']); //only admin still do
 Route::prefix('/trips')->middleware(['auth:api'])->group(function () {
 
     // Trips
-    Route::post('/', [TripController::class, 'store']);
-    Route::get('/{trip}', [TripController::class, 'show']);
-    Route::put('/{trip}', [TripController::class, 'update']);
-    Route::delete('/{trip}', [TripController::class, 'destroy']);
+    Route::post('/', [TripController::class, 'createTrip']);
+    Route::middleware(['check.trip.members'])->group(function () {
+        Route::get('/{trip}', [TripController::class, 'show']);
+        Route::put('/{trip}', [TripController::class, 'update']);
+        Route::delete('/{trip}', [TripController::class, 'destroy']);
     // Trip members
-    Route::post('/{trip}/add-member', [TripController::class, 'addMember']);
-    Route::delete('/{trip}/members/{user}', [TripController::class, 'removeMember']);
+        Route::post('/{trip}/add-member', [TripController::class, 'addMember']);
+        Route::delete('/{trip}/members/{user}', [TripController::class, 'removeMember']);
+    });
 });
 
 
@@ -54,14 +56,14 @@ Route::middleware('auth:api')->group(function () {
 
 //itinarary managment
 Route::middleware('auth:api')->prefix('trips/{trip}/itineraries')->group(function () {
-        Route::get('/', [ItineraryController::class, 'index']);
-        Route::post('/', [ItineraryController::class, 'store']);
-        Route::put('/{itinerary}', [ItineraryController::class, 'update']);
-        Route::delete('/{itinerary}', [ItineraryController::class, 'destroy']);
+    Route::get('/', [ItineraryController::class, 'index']);
+    Route::post('/', [ItineraryController::class, 'store']);
+    Route::put('/{itinerary}', [ItineraryController::class, 'update']);
+    Route::delete('/{itinerary}', [ItineraryController::class, 'destroy']);
 });
 
 //Expenses
-Route::middleware(['auth:api','check.trip.members'])->prefix('trips/{trip}/expenses')->group(function () {
+Route::middleware(['auth:api', 'check.trip.members'])->prefix('trips/{trip}/expenses')->group(function () {
     Route::post('/', [ExpenseController::class, 'store']);
     Route::patch('/settle/{expense}', [ExpenseController::class, 'settle']);
     Route::get('/report', [ExpenseController::class, 'report']);

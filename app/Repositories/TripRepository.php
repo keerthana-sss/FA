@@ -7,6 +7,10 @@ use App\Contracts\TripRepositoryInterface;
 
 class TripRepository implements TripRepositoryInterface
 {
+    public function listAll()
+    {
+        return Trip::with('owner')->get();
+    }
     public function create(array $data): Trip
     {
         return Trip::create($data);
@@ -30,7 +34,7 @@ class TripRepository implements TripRepositoryInterface
     public function listForUser(int $userId): iterable
     {
         return Trip::where('owner_id', $userId)
-                   ->orWhereHas('users', fn($q) => $q->where('user_id', $userId))
-                   ->get();
+            ->orWhereHas('users', fn($q) => $q->where('user_id', $userId))
+            ->get();
     }
 }
