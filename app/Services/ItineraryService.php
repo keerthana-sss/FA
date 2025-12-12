@@ -18,20 +18,11 @@ class ItineraryService
 
     public function listItineraries(Trip $trip, User $user)
     {
-        // Check if user belongs to this trip
-        if (!$trip->users->contains($user->id)) {
-            abort(403, 'This action is unauthorized.');
-        }
-
-        return $this->repository->allByTrip($trip->id);
+        return $this->repository->allItinerariesByTrip($trip->id);
     }
 
     public function createItinerary(array $data, Trip $trip, User $user): Itinerary
     {
-        if (!$trip->users->contains($user->id)) {
-            abort(403, 'This action is unauthorized.');
-        }
-
         // return $this->repository->create($data, $trip, $user);
         return $this->repository->create([
             "trip_id"     => $trip->id,
@@ -46,19 +37,11 @@ class ItineraryService
 
     public function updateItinerary(Itinerary $itinerary, array $data, User $user): Itinerary
     {
-        if (!$itinerary->trip->users->contains($user->id)) {
-            abort(403, 'This action is unauthorized.');
-        }
-
         return $this->repository->update($itinerary, $data);
     }
 
     public function deleteItinerary(Itinerary $itinerary, User $user): bool
     {
-        if (!$itinerary->trip->users->contains($user->id)) {
-            abort(403, 'This action is unauthorized.');
-        }
-
         return $this->repository->delete($itinerary);
     }
 }

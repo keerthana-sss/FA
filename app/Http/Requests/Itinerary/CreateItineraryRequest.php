@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Itinerary;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,9 +24,9 @@ class CreateItineraryRequest extends FormRequest
         return [
             'day_number'  => 'required|integer|min:1',
             'title'       => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'start_time'  => 'nullable|date_format:H:i',
-            'end_time'    => 'nullable|date_format:H:i',
+            'description' => 'required|string',
+            'start_time'  => 'required|date_format:Y-m-d H:i',
+            'end_time'      => 'required|date_format:Y-m-d H:i|after_or_equal:start_time',
         ];
     }
 }

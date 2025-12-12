@@ -11,7 +11,7 @@ use App\Contracts\ItineraryRepositoryInterface;
 
 class ItineraryRepository implements ItineraryRepositoryInterface
 {
-    public function allByTrip(int $tripId)
+    public function allItinerariesByTrip(int $tripId)
     {
         return Itinerary::where('trip_id', $tripId)->get();
     }

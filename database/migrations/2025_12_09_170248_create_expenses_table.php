@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->boolean('is_settled')->default(false);
             $table->timestamps();
+            // $table->softDeletes();
 
             $table->foreign('trip_id')->references('id')->on('trips');
             $table->foreign('payer_id')->references('id')->on('users');

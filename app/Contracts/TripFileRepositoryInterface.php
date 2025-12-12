@@ -6,7 +6,7 @@ use App\Models\TripFile;
 
 interface TripFileRepositoryInterface
 {
-    public function store(array $data): TripFile;
+    public function createFile($trip, $request, $path): TripFile;
     public function delete(TripFile $file): bool;
-    public function getByTrip(int $tripId);
+    public function getFilesByTrip(int $tripId);
 }

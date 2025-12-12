@@ -23,7 +23,7 @@ class TripFileUploadRequest extends FormRequest
     {
         return [
             'file' => 'required|file|max:10240',
-            'type' => 'required|integer|in:0,1,2,3',
+            'type' => 'integer|in:0,1,2,3',
         ];
     }
 }

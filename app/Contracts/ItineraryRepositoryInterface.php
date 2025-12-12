@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 
 interface ItineraryRepositoryInterface
 {
-    public function allByTrip(int $tripId);
+    public function allitinerariesByTrip(int $tripId);
     public function find(int $id): ?Itinerary;
     public function create(array $data): Itinerary;
     public function update(Itinerary $itinerary, array $data): Itinerary;

@@ -22,9 +22,7 @@ class TripFileController extends Controller
     {
         $file = $this->service->upload(
             $trip,
-            $request->user(),
-            $request->file('file'),
-            $request->type
+            $request
         );
 
         return ApiResponse::setMessage('File uploaded successfully')
@@ -39,9 +37,26 @@ class TripFileController extends Controller
         return ApiResponse::setMessage('File deleted successfully')->response();
     }
 
-    public function list(Trip $trip)
+    public function listAllFiles(Trip $trip)
     {
         $files = $this->service->listTripFiles($trip);
+        if ($files->isEmpty()) {
+            return ApiResponse::setMessage('No files for this trip')
+                ->setData([])
+                ->response();
+        }
+
+        return ApiResponse::setData($files)->response();
+    }
+
+    public function listUserFiles(Trip $trip)
+    {
+        $files = $this->service->listUserFiles($trip, auth()->user());
+        if ($files->isEmpty()) {
+            return ApiResponse::setMessage('No files for this User')
+                ->setData([])
+                ->response();
+        }
 
         return ApiResponse::setData($files)->response();
     }

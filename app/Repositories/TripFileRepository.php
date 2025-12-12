@@ -2,14 +2,20 @@
 
 namespace App\Repositories;
 
-use App\Contracts\TripFileRepositoryInterface;
 use App\Models\TripFile;
+use App\Enums\TripFileType;
+use App\Contracts\TripFileRepositoryInterface;
 
 class TripFileRepository implements TripFileRepositoryInterface
 {
-    public function store(array $data): TripFile
+    public function createFile($trip, $request, $path): TripFile
     {
-        return TripFile::create($data);
+        return TripFile::create([
+            'trip_id'     => $trip->id,
+            'uploaded_by' => $request->user()->id,
+            'path'        => $path,
+            'type'        => $request->type ?? TripFileType::Other,
+        ]);
     }
 
     public function delete(TripFile $file): bool
@@ -17,7 +23,7 @@ class TripFileRepository implements TripFileRepositoryInterface
         return $file->delete();
     }
 
-    public function getByTrip(int $tripId)
+    public function getFilesByTrip(int $tripId)
     {
         return TripFile::forTrip($tripId)->get();
     }

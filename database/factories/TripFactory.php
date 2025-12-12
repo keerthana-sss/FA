@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,11 @@ class TripFactory extends Factory
     public function definition(): array
     {
         return [
-            //
-        ];
+        'title' => $this->faker->sentence,
+        'destination' => $this->faker->city,
+        'owner_id' => User::factory(),
+        'start_date' => now(),
+        'end_date' => now()->addDays(3),
+    ];
     }
 }

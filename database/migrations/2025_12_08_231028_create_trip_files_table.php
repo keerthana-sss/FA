@@ -22,6 +22,7 @@ return new class extends Migration
             $table->tinyInteger('type')->default(TripFileType::Other);
             // $table->json('metadata')->nullable(); // optional: store extra info e.g. size, original name
             $table->timestamps();
+            // $table->softDeletes();
         });
     }
 

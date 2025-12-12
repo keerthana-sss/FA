@@ -12,11 +12,9 @@ class ExpenseRepository implements ExpenseRepositoryInterface
         return Expense::create($data);
     }
 
-    public function getByTrip(int $tripId)
+    public function getById(int $id)
     {
-        // return Expense::where('trip_id', $tripId)
-        //     ->where('is_settled', 0)
-        //     ->get();
+        return Expense::find($id);
     }
 
     public function settleExpense(int $id)

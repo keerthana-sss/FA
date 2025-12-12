@@ -17,12 +17,11 @@ class ExpenseController extends Controller
     {
         $this->expenseService = $expenseService;
     }
-    public function store(StoreExpenseRequest $request, $tripId)
+    public function store(StoreExpenseRequest $request, Trip $trip)
     {
         $data = $request->validated();
-        $data['trip_id'] = $tripId;
 
-        $expenses = $this->expenseService->addExpense($data);
+        $expenses = $this->expenseService->addExpense($trip, $data);
 
         return response()->json([
             'message' => 'Expenses added successfully',
@@ -30,9 +29,9 @@ class ExpenseController extends Controller
         ], 201);
     }
 
-    public function settle($id)
+    public function settle(Trip $trip, int $expenseId)
     {
-        $expense = $this->expenseService->settleExpense($id);
+        $expense = $this->expenseService->settleExpense($trip, $expenseId);
 
         return response()->json([
             'message' => 'Expense settled successfully',
@@ -40,9 +39,9 @@ class ExpenseController extends Controller
         ]);
     }
 
-    public function report($tripId)
+    public function report(Trip $trip)
     {
-        $expenses = $this->expenseService->getTripExpenses($tripId);
+        $expenses = $this->expenseService->getTripExpenses($trip->id);
 
         return response()->json([
             'data' => $expenses
