@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\PlacesController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\TripFileController;
 use App\Http\Controllers\DashboardController;
@@ -33,7 +34,7 @@ Route::prefix('/trips')->middleware(['auth:api'])->group(function () {
     // Trips
     Route::post('/', [TripController::class, 'createTrip']);
     Route::middleware(['check.trip.members'])->group(function () {
-        Route::get('/{tripw}', [TripController::class, 'show']);
+        Route::get('/{trip}', [TripController::class, 'show']);
         Route::put('/{trip}', [TripController::class, 'update']);
         Route::delete('/{trip}', [TripController::class, 'destroy']);
         // Trip members
@@ -45,10 +46,10 @@ Route::prefix('/trips')->middleware(['auth:api'])->group(function () {
 
 //upload files in trips
 Route::middleware(['auth:api', 'check.trip.members'])->prefix('trips/{trip}/files')->group(function () {
-    Route::post('/', [TripFileController::class, 'upload']);
-    Route::delete('{file}', [TripFileController::class, 'delete']);
     Route::get('/',  [TripFileController::class, 'listAllFiles']);
     Route::get('/user-files',  [TripFileController::class, 'listUserFiles']);
+    Route::post('/', [TripFileController::class, 'upload']);
+    Route::delete('{file}', [TripFileController::class, 'delete']);
 });
 
 
@@ -69,3 +70,5 @@ Route::middleware(['auth:api', 'check.trip.members'])->prefix('trips/{trip}/expe
 
 
 Route::get('/dashboard/trip/{trip}', [DashboardController::class, 'showTripDashboard'])->name('dashboard');
+
+Route::post('/get-near-by', [PlacesController::class, 'search']);

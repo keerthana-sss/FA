@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('trips', function (Blueprint $table) {
             $table->id();
             $table->foreignId('owner_id')->constrained('users');
-            $table->string('title');
+            $table->string('title')->unique();
             $table->string('destination');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();

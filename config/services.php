@@ -34,5 +34,12 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'apiKeys' => [
+        'geoapify_key' => env('GEOAPIFY_API_KEY'),
+    ],
+    'apiUrls' => [
+        'geoapify_url' => env('GEOAPIFY_API_URL'),
+        'geocoding_url' => env('OPEN_METEO_GEOCODING_API_URL'),
+    ]
 
 ];

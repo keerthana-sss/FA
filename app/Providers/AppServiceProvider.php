@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use Laravel\Passport\Passport;
+use App\Clients\GeoLocationClient;
 use App\Repositories\TripRepository;
 use App\Repositories\UserRepository;
+use App\Services\GeoLocationService;
 use App\Repositories\ExpenseRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\TripFileRepository;
@@ -26,8 +28,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TripRepositoryInterface::class, TripRepository::class);
         $this->app->bind(TripFileRepositoryInterface::class,TripFileRepository::class);
         $this->app->bind(ItineraryRepositoryInterface::class, ItineraryRepository::class);
-        $this->app->bind(ExpenseRepositoryInterface::class,ExpenseRepository::class
-    );
+        $this->app->bind(ExpenseRepositoryInterface::class,ExpenseRepository::class);
+
+        $this->app->singleton(GeoLocationClient::class, fn() => new GeoLocationClient());
+
+        $this->app->singleton(GeoLocationService::class, 
+        function ($app) {
+            return new GeoLocationService($app->make(GeoLocationClient::class));
+        });
     }
 
     /**

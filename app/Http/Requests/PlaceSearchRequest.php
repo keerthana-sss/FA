@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Trip;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateTripRequest extends FormRequest
+class PlaceSearchRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,13 +19,12 @@ class CreateTripRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            'title'       => 'required|unique:trips,title|string|max:255',
-            'destination' => 'required|string|max:255',
-            'start_date'  => 'nullable|date|after_or_equal:today',
-            'end_date'    => 'nullable|date|after_or_equal:start_date',
+            'city'     => 'required|string',
+            'category' => 'required|string',
+            'radius'   => 'nullable|integer|min:100|max:20000',
         ];
     }
 }
