@@ -4,8 +4,22 @@ namespace App\Services;
 
 class BalanceService
 {
-    public function computeNetBalances($expenses)
+    private function symbol(string $currency)
     {
+        return match (strtoupper($currency)) {
+            'USD' => '$',
+            'EUR' => '€',
+            'INR' => '₹',
+            'GBP' => '£',
+            default => strtoupper($currency) . ' ',
+        };
+    }
+
+    public function computeNetBalances($expenses, string $toCurrency)
+    {
+        $baseCurrency = 'INR';
+        $toCurrency   = strtoupper($toCurrency);
+        $symbol = $this->symbol($toCurrency);
         $groups = $expenses->reduce(function ($carry, $exp) {
             $u1 = min($exp->payer_id, $exp->payee_id);
             $u2 = max($exp->payer_id, $exp->payee_id);
@@ -29,7 +43,7 @@ class BalanceService
             return $carry;
         }, []);
 
-        return collect($groups)->map(function ($row) {
+        $balances = collect($groups)->map(function ($row) use ($symbol) {
             $net = $row['amount_user1_to_user2'] - $row['amount_user2_to_user1'];
             if ($net === 0) return null;
 
@@ -37,7 +51,42 @@ class BalanceService
                 'payer_id' => $net > 0 ? $row['user1'] : $row['user2'],
                 'payee_id' => $net > 0 ? $row['user2'] : $row['user1'],
                 'amount'   => abs($net),
+                'symbol'   => $symbol,
             ];
         })->filter()->values();
+
+        if (strtoupper($toCurrency) !== 'INR') {
+            info('IN CONVERION');
+
+            $converter = app(CurrencyConversionService::class);
+
+            return $balances->map(function ($row) use ($baseCurrency, $converter, $toCurrency, $symbol) {
+
+                $convertedAmount = $converter->convert(
+                    $row['amount'],
+                    $baseCurrency,
+                    $toCurrency
+                );
+                if ($convertedAmount === null) {
+                    return [
+                        'payer_id' => $row['payer_id'],
+                        'payee_id' => $row['payee_id'],
+                        'amount'   => round($row['amount'], 2),
+                        'currency' => $baseCurrency,
+                        'symbol'   => $this->symbol($baseCurrency),
+                        'conversion_failed' => true,
+                    ];
+                }
+
+                return [
+                    'payer_id' => $row['payer_id'],
+                    'payee_id' => $row['payee_id'],
+                    'amount'   => $convertedAmount,
+                    'symbol'   => $symbol,
+                ];
+            });
+        }
+
+        return $balances;
     }
 }

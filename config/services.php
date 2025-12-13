@@ -36,10 +36,12 @@ return [
     ],
     'apiKeys' => [
         'geoapify_key' => env('GEOAPIFY_API_KEY'),
+        'exchange_key' => env('EXCHANGE_API_KEY'),
     ],
     'apiUrls' => [
         'geoapify_url' => env('GEOAPIFY_API_URL'),
         'geocoding_url' => env('OPEN_METEO_GEOCODING_API_URL'),
+        'exchange_url' => env('EXCHANGE_API_BASE_URL'),
     ]
 
 ];

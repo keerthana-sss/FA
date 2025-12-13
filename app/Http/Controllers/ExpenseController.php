@@ -39,9 +39,10 @@ class ExpenseController extends Controller
         ]);
     }
 
-    public function report(Trip $trip)
+    public function report(Request $request, Trip $trip)
     {
-        $expenses = $this->expenseService->getTripExpenses($trip->id);
+        $currency = strtoupper($request->query('currency', 'INR'));
+        $expenses = $this->expenseService->getTripExpenses($trip->id, $currency);
 
         return response()->json([
             'data' => $expenses

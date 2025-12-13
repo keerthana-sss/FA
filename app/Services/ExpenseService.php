@@ -96,17 +96,18 @@ class ExpenseService
         return $this->expenseRepo->settleExpense($expenseId);
     }
 
-    public function getTripExpenses(int $tripId)
+    public function getTripExpenses(int $tripId, string $toCurrency = 'INR')
     {
         $expenses = $this->expenseRepo->getUnsettledByTrip($tripId);
 
-        $balances = $this->balanceService->computeNetBalances($expenses);
+        $balances = $this->balanceService->computeNetBalances($expenses,$toCurrency);
+        info($balances);
 
         return $balances->map(fn($row) => [
             'payer_id' => $row['payer_id'],
             'payee_id' => $row['payee_id'],
             'amount'   => $row['amount'],
-            'message'  => "User {$row['payee_id']} needs to pay User {$row['payer_id']} ₹{$row['amount']}"
+            'message'  => "User {$row['payee_id']} needs to pay User {$row['payer_id']} {$row['symbol']}{$row['amount']}"
         ]);
     }
 }
