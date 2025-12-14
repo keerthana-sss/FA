@@ -89,7 +89,6 @@ class AuthService
      */
     protected function issueToken(string $username, string $password)
     {
-        info('in issuetoken');
         $clientId = env('PASSPORT_PASSWORD_CLIENT_ID');
         $clientSecret = env('PASSPORT_PASSWORD_CLIENT_SECRET');
 

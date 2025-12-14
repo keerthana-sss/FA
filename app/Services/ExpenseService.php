@@ -101,7 +101,6 @@ class ExpenseService
         $expenses = $this->expenseRepo->getUnsettledByTrip($tripId);
 
         $balances = $this->balanceService->computeNetBalances($expenses,$toCurrency);
-        info($balances);
 
         return $balances->map(fn($row) => [
             'payer_id' => $row['payer_id'],

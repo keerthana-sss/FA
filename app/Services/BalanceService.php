@@ -15,7 +15,7 @@ class BalanceService
         };
     }
 
-    public function computeNetBalances($expenses, string $toCurrency)
+    public function computeNetBalances($expenses, string $toCurrency = "INR")
     {
         $baseCurrency = 'INR';
         $toCurrency   = strtoupper($toCurrency);
@@ -56,7 +56,6 @@ class BalanceService
         })->filter()->values();
 
         if (strtoupper($toCurrency) !== 'INR') {
-            info('IN CONVERION');
 
             $converter = app(CurrencyConversionService::class);
 

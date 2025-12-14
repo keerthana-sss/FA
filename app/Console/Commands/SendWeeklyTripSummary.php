@@ -41,28 +41,23 @@ class SendWeeklyTripSummary extends Command
     public function handle()
     {
         $today = Carbon::today();
-        info($today);
 
         // Get active trips
         $trips = Trip::where('start_date', '<=', $today)
             ->where('end_date', '>=', $today)
             ->get();
-        info($trips);
+        info("Found " . $trips->count() . " active trips for weekly summary.");
 
         foreach ($trips as $trip) {
 
             $weekStart = now()->startOfWeek();
             $weekEnd   = now()->endOfWeek();
 
-            // info($weekStart);
-            // info($weekEnd);
-
             // Fetch this week's expenses
             $expenses = Expense::where('trip_id', $trip->id)
                 ->whereBetween('created_at', [$weekStart, $weekEnd])
                 ->with(['payer'])
                 ->get();
-            info($expenses);
 
             // Fetch this week's itinerary updates
             $itineraries = Itinerary::where('trip_id', $trip->id)

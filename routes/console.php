@@ -10,5 +10,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('trip:weekly-summary')
-             ->weeklyOn(1, '09:00');
-            // ->everyMinute();
+            //  ->weeklyOn(1, '09:00');
+            ->everyTwoSeconds();
