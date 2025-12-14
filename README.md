@@ -4,7 +4,7 @@ A Laravel-based travel planner for collaborative trip management, expense tracki
 ---
 
 ## Overview
-WanderLog is a centralized travel management system that helps users plan, track, and manage trips efficiently. It allows collaborative trip creation, expense sharing, itinerary planning, and provides insights using external APIs for geocoding, nearby places, and currency exchange.
+TravelHub is a centralized travel management system that helps users plan, track, and manage trips efficiently. It allows collaborative trip creation, expense sharing, itinerary planning, and provides insights using external APIs for geocoding, nearby places, and currency exchange.
 
 ---
 
