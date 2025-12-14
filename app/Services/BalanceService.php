@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use function Laravel\Prompts\info;
+
 class BalanceService
 {
     private function symbol(string $currency)
@@ -18,6 +20,7 @@ class BalanceService
     public function computeNetBalances($expenses, string $toCurrency = "INR")
     {
         $baseCurrency = 'INR';
+        info($expenses);
         $toCurrency   = strtoupper($toCurrency);
         $symbol = $this->symbol($toCurrency);
         $groups = $expenses->reduce(function ($carry, $exp) {
@@ -45,7 +48,10 @@ class BalanceService
 
         $balances = collect($groups)->map(function ($row) use ($symbol) {
             $net = $row['amount_user1_to_user2'] - $row['amount_user2_to_user1'];
-            if ($net === 0) return null;
+            
+            if ($net == 0 || $row['user1'] === $row['user2']) {
+                return null;
+            }
 
             return [
                 'payer_id' => $net > 0 ? $row['user1'] : $row['user2'],

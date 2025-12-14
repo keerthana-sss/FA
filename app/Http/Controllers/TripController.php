@@ -55,6 +55,9 @@ class TripController extends Controller
     }
     public function show(Trip $trip)
     {
+        // $trips = $this->tripService->listAllTrips(au);
+        $trip->load('users', 'itineraries');
+
         return ApiResponse::setMessage('Trip details fetched')
             ->setData($trip)
             ->response(Response::HTTP_OK);
@@ -62,7 +65,7 @@ class TripController extends Controller
 
     public function update(UpdateTripRequest $request, Trip $trip)
     {
-        $this->authorize('checkIsNotOwner', $trip);
+        $this->authorize('checkIsOwner', $trip);
 
         $trip = $this->tripService->updateTrip($trip, $request->validated(), auth()->id());
 
@@ -73,7 +76,7 @@ class TripController extends Controller
 
     public function destroy(Trip $trip)
     {
-        $this->authorize('checkIsNotOwner', $trip);
+        $this->authorize('checkIsOwner', $trip);
         $this->tripService->deleteTrip($trip, auth()->id());
 
         return ApiResponse::setMessage('Trip deleted successfully')
@@ -82,7 +85,7 @@ class TripController extends Controller
 
     public function addMember(AddMemberRequest $request, Trip $trip)
     {
-        $this->authorize('checkIsNotOwner', $trip);
+        $this->authorize('checkIsOwner', $trip);
 
         $member = $this->tripService->addMember(
             $trip,
@@ -97,8 +100,8 @@ class TripController extends Controller
 
     public function removeMember(Trip $trip, $user)
     {
-        $this->authorize('checkIsNotOwner', $trip);
         $this->authorize('checkIsOwner', $trip);
+        // $this->authorize('checkIsNotOwner', $trip);
         $this->tripService->removeMember($trip, $user);
         return ApiResponse::setMessage('Member removed')->response();
     }
