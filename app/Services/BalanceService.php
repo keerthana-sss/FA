@@ -13,6 +13,21 @@ class BalanceService
             'EUR' => '€',
             'INR' => '₹',
             'GBP' => '£',
+            'AUD' => 'A$',  // Australian Dollar
+            'CAD' => 'C$',  // Canadian Dollar
+            'CHF' => 'CHF', // Swiss Franc
+            'CNY' => '¥',   // Chinese Yuan
+            'JPY' => '¥',   // Japanese Yen
+            'MXN' => 'MX$', // Mexican Peso
+            'NZD' => 'NZ$', // New Zealand Dollar
+            'SGD' => 'S$',  // Singapore Dollar
+            'ZAR' => 'R',   // South African Rand
+            'BRL' => 'R$',  // Brazilian Real
+            'KRW' => '₩',   // South Korean Won
+            'MYR' => 'RM',  // Malaysian Ringgit
+            'TRY' => '₺',   // Turkish Lira
+            'IDR' => 'Rp',  // Indonesian Rupiah
+            'HKD' => 'HK$', // Hong Kong Dollar
             default => strtoupper($currency) . ' ',
         };
     }
@@ -20,7 +35,7 @@ class BalanceService
     public function computeNetBalances($expenses, string $toCurrency = "INR")
     {
         $baseCurrency = 'INR';
-        info($expenses);
+        // info($expenses);
         $toCurrency   = strtoupper($toCurrency);
         $symbol = $this->symbol($toCurrency);
         $groups = $expenses->reduce(function ($carry, $exp) {
@@ -48,7 +63,7 @@ class BalanceService
 
         $balances = collect($groups)->map(function ($row) use ($symbol) {
             $net = $row['amount_user1_to_user2'] - $row['amount_user2_to_user1'];
-            
+
             if ($net == 0 || $row['user1'] === $row['user2']) {
                 return null;
             }

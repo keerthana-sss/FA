@@ -18,7 +18,7 @@ class TripFactory extends Factory
     public function definition(): array
     {
         return [
-        'title' => $this->faker->sentence,
+        'title' => $this->faker->unique()->sentence,
         'destination' => $this->faker->city,
         'owner_id' => User::factory(),
         'start_date' => now(),

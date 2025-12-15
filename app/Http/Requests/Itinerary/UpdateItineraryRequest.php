@@ -25,8 +25,8 @@ class UpdateItineraryRequest extends FormRequest
             'day_number'  => 'sometimes|integer|min:1',
             'title'       => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'start_time'  => 'required|date_format:Y-m-d H:i',
-            'end_time'      => 'required|date_format:Y-m-d H:i|after_or_equal:start_time',
+            'start_time'  => 'nullable|date_format:Y-m-d H:i',
+            'end_time'      => 'nullable|date_format:Y-m-d H:i|after_or_equal:start_time',
             'location' => 'nullable|string|max:255',
         ];
     }

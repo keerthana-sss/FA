@@ -64,13 +64,10 @@ class SendWeeklyTripSummary extends Command
                 ->whereBetween('created_at', [$weekStart, $weekEnd])
                 ->get();
 
-            // Calculate balances
             $balances = $this->balanceService->computeNetBalances($expenses);
 
-            // Collect all emails
             $emails = $trip->users->pluck('email')->toArray();
 
-            // Send mail to all in a single "To" list (your rule)
             if (!empty($emails)) {
                 Mail::to($emails)->send(
                     new WeeklyTripSummaryMail($trip, $expenses, $itineraries, $balances->values()->all())

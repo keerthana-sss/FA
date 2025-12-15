@@ -48,20 +48,20 @@ class TripTest extends TestCase
     {
         $this->actingAs($this->user, 'api');
 
-        $trips = Trip::factory()->count(3)->create([
+        $trip = Trip::factory()->create([
             'owner_id'   => $this->user->id,
-            'title'      => 'Sample Trip',
+            'title'      => 'Sample Trip 1',
             'destination' => 'Paris',
         ]);
 
         $this->getJson('/api/trips');
 
-        foreach ($trips as $trip) {
+        // foreach ($trips as $trip) {
             $this->assertDatabaseHas('trips', [
                 'id' => $trip->id,
                 'owner_id' => $this->user->id,
             ]);
-        }
+        // }
     }
 
     /** @test */

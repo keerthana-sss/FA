@@ -37,6 +37,7 @@ class ItineraryService
 
     public function updateItinerary(Itinerary $itinerary, array $data, User $user): Itinerary
     {
+        $data['updated_by'] = $user->id;
         return $this->repository->update($itinerary, $data);
     }
 
